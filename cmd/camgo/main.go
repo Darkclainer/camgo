@@ -18,7 +18,7 @@ const (
 	codeInternalError
 )
 
-func exit(code int, format string, args ...interface{}) {
+func exitf(code int, format string, args ...interface{}) {
 	fmt.Fprintf(os.Stderr, format, args...)
 	os.Exit(code)
 }
@@ -39,7 +39,7 @@ func downloadWord(query string) ([]byte, error) {
 
 func saveWord(path string, content []byte) {
 	if err := ioutil.WriteFile(path, content, 0660); err != nil {
-		exit(codeInternalError, "can not save word to %s: %s\n",
+		exitf(codeInternalError, "can not save word to %s: %s\n",
 			path,
 			err.Error(),
 		)
@@ -55,11 +55,11 @@ func main() {
 	var input io.Reader
 	switch {
 	case *webWord != "" && *localPath != "":
-		exit(codeErrorArgs, "both -w and -f can not be specified at the same time!\n")
+		exitf(codeErrorArgs, "both -w and -f can not be specified at the same time!\n")
 	case *webWord != "":
 		wordBytes, err := downloadWord(*webWord)
 		if err != nil {
-			exit(codeInternalError, "can not download word %s: %s\n", *webWord, err.Error())
+			exitf(codeInternalError, "can not download word %s: %s\n", *webWord, err.Error())
 		}
 		if *savePath != "" {
 			saveWord(*savePath, wordBytes)
@@ -68,18 +68,18 @@ func main() {
 	case *localPath != "":
 		file, err := os.Open(*localPath)
 		if err != nil {
-			exit(codeErrorArgs, "can not open file %s: %s\n", *localPath, err.Error())
+			exitf(codeErrorArgs, "can not open file %s: %s\n", *localPath, err.Error())
 		}
 		input = file
 	}
 
 	lemmas, err := camgo.ParseLemmaHTML(input)
 	if err != nil {
-		exit(codeErrorArgs, "can not parse word: %s\n", err.Error())
+		exitf(codeErrorArgs, "can not parse word: %s\n", err.Error())
 	}
 	s, err := json.MarshalIndent(lemmas, "", "\t")
 	if err != nil {
-		exit(codeErrorArgs, "can not marshal word: %s\n", err.Error())
+		exitf(codeErrorArgs, "can not marshal word: %s\n", err.Error())
 	}
 	fmt.Printf("%s\n", s)
 }
