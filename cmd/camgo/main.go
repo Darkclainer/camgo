@@ -71,6 +71,8 @@ func main() {
 			exitf(codeErrorArgs, "can not open file %s: %s\n", *localPath, err.Error())
 		}
 		input = file
+	default:
+		exitf(codeErrorArgs, "you should specify either -w or -f\n")
 	}
 
 	lemmas, err := camgo.ParseLemmaHTML(input)
