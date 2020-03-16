@@ -51,7 +51,6 @@ func ParseLemmaHTML(page io.Reader) ([]*Lemma, error) {
 
 	dictionaries := doc.FindMatcher(dictionaryMatcher)
 	lemmas, err := enrichLemmas(new(Lemma), dictionaries, parseDictionary)
-	debugPrint(lemmas)
 	return lemmas, err
 }
 
