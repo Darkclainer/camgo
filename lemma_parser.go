@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -249,14 +250,15 @@ func parseDefBlock(lctx *Lemma, defBlock *goquery.Selection) ([]*Lemma, error) {
 }
 
 var defMatcher = cascadia.MustCompile(`div.def`)
+var newlineRegexp = regexp.MustCompile(`\s\s+`)
 
 func getDefinitionFromDDefH(ddefh *goquery.Selection) (string, error) {
 	def := ddefh.ChildrenMatcher(defMatcher)
 	if def.Length() == 0 {
 		return "", fmt.Errorf("div.ddef_h has no div.dev")
 	}
-	definition := strings.TrimSpace(def.Text())
-	definition = strings.TrimSuffix(definition, ":")
+	definition := newlineRegexp.ReplaceAllString(def.Text(), " ")
+	definition = strings.Trim(definition, " \n\t:")
 	return definition, nil
 }
 
