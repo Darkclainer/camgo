@@ -275,9 +275,22 @@ func getExamples(defBody *goquery.Selection) []string {
 	})
 }
 
-func parsePhraseBlock(lctx *Lemma, dictionary *goquery.Selection) ([]*Lemma, error) {
-	println("phrase-block")
-	return nil, nil
+var phraseHeadMatcher = cascadia.MustCompile(`div.phrase-head`)
+var phraseTitleMatcher = cascadia.MustCompile(`span.phrase-title`)
+var phraseBodyMatcher = cascadia.MustCompile(`div.phrase-body`)
+var defBlokMatcher = cascadia.MustCompile(`div.def-block`)
+
+func parsePhraseBlock(lctx *Lemma, phraseBlock *goquery.Selection) ([]*Lemma, error) {
+	lctx.Alternative = phraseBlock.
+		ChildrenMatcher(phraseHeadMatcher).
+		ChildrenMatcher(phraseTitleMatcher).
+		Text()
+
+	defBlocks := phraseBlock.
+		ChildrenMatcher(phraseBodyMatcher).
+		ChildrenMatcher(defBlokMatcher)
+
+	return enrichLemmas(lctx, defBlocks, parseDefBlock)
 }
 
 func parsePVBlock(lctx *Lemma, dictionary *goquery.Selection) ([]*Lemma, error) {
