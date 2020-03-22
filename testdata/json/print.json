@@ -1,0 +1,864 @@
+{
+  "length": 34,
+  "type": "lemmas",
+  "content": [
+    {
+      "index": 0,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "letters, numbers, or symbols that have been produced on paper by a machine using ink",
+        "guide_word": "text",
+        "alternative": "",
+        "grammar": [
+          "U"
+        ],
+        "examples": [
+          "The title is in bold print.",
+          "This novel is available in large print for readers with poor eyesight.",
+          "The book was rushed into print (= was produced and published) as quickly as possible.",
+          "The print quality (= the quality of the text produced) of the new laser printer is excellent."
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "newspapers, books, and magazines",
+        "guide_word": "text",
+        "alternative": "",
+        "grammar": [
+          "U"
+        ],
+        "examples": [
+          "The debate is still raging, both in print and online."
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "If a book is in print, it is possible to buy a new copy of it, and if it is out of print, it is not now possible",
+        "guide_word": "text",
+        "alternative": "",
+        "examples": [
+          "Is her work still in print?",
+          "Classic literature never goes out of print."
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "If a book is in print, it is possible to buy a new copy of it, and if it is out of print, it is not now possible",
+        "guide_word": "text",
+        "alternative": "",
+        "examples": [
+          "Is her work still in print?",
+          "Classic literature never goes out of print."
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "a photographic copy of a painting, or a picture made by pressing paper onto a special surface covered in ink, or a single photograph from a film",
+        "guide_word": "picture",
+        "alternative": "",
+        "grammar": [
+          "C"
+        ],
+        "examples": [
+          "a print of Van Gogh's \"Sunflowers\"",
+          "a signed Hockney print",
+          "I had some prints made of the party photos."
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "any type of pattern produced using ink on a piece of clothing",
+        "guide_word": "pattern",
+        "alternative": "",
+        "grammar": [
+          "C"
+        ],
+        "examples": [
+          "a floral/paisley print"
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "informal for fingerprint",
+        "guide_word": "fingerprint",
+        "alternative": "",
+        "grammar": [
+          "C"
+        ],
+        "examples": [
+          "The burglar had left his prints all over the window."
+        ]
+      }
+    },
+    {
+      "index": 7,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "verb"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "to produce writing or images on paper or other material with a machine",
+        "guide_word": "text",
+        "alternative": "",
+        "grammar": [
+          "I",
+          "T"
+        ],
+        "examples": [
+          "The leaflets will be printed on recycled paper.",
+          "I'm waiting for a document to print."
+        ]
+      }
+    },
+    {
+      "index": 8,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "verb"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "to include a piece of writing in a newspaper or magazine",
+        "guide_word": "text",
+        "alternative": "",
+        "grammar": [
+          "T"
+        ],
+        "examples": [
+          "Some newspapers still refuse to print certain swear words.",
+          "They printed his letter in Tuesday's paper."
+        ]
+      }
+    },
+    {
+      "index": 9,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "verb"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "to produce a newspaper, magazine, or book in large quantities",
+        "guide_word": "text",
+        "alternative": "",
+        "grammar": [
+          "T"
+        ],
+        "examples": [
+          "20,000 copies of the novel will be printed in hardback."
+        ]
+      }
+    },
+    {
+      "index": 10,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "verb"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "to write without joining the letters together",
+        "guide_word": "write",
+        "alternative": "",
+        "grammar": [
+          "I",
+          "T"
+        ],
+        "examples": [
+          "Please print your name clearly below your signature."
+        ]
+      }
+    },
+    {
+      "index": 11,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "verb"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "to produce a photograph on paper",
+        "guide_word": "picture",
+        "alternative": "",
+        "grammar": [
+          "T"
+        ],
+        "examples": [
+          "Photographs are better if they are printed from the original negative."
+        ]
+      }
+    },
+    {
+      "index": 12,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "verb"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "to produce a pattern on material or paper",
+        "guide_word": "pattern",
+        "alternative": "",
+        "grammar": [
+          "T"
+        ],
+        "examples": [
+          "The designs are printed onto the fabric by hand."
+        ]
+      }
+    },
+    {
+      "index": 13,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "verb"
+        ],
+        "language": "american-english",
+        "transcriptions": {
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "to put letters or images on paper or another material using a machine, or to produce books, magazines, newspapers, etc., in this way",
+        "guide_word": "make text",
+        "alternative": "",
+        "grammar": [
+          "T"
+        ],
+        "examples": [
+          "The newspaper printed my letter to the editor."
+        ]
+      }
+    },
+    {
+      "index": 14,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "verb"
+        ],
+        "language": "american-english",
+        "transcriptions": {
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "To print is also to write without joining the letters together",
+        "guide_word": "make text",
+        "alternative": "",
+        "grammar": [
+          "T"
+        ],
+        "examples": [
+          "Please print your name clearly below your signature."
+        ]
+      }
+    },
+    {
+      "index": 15,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "verb"
+        ],
+        "language": "american-english",
+        "transcriptions": {
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "To print something out is to print text or images from a machine attached to a computer",
+        "guide_word": "make text",
+        "alternative": "",
+        "grammar": [
+          "T"
+        ],
+        "examples": [
+          "[ M ] Just print out the first two pages."
+        ]
+      }
+    },
+    {
+      "index": 16,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "american-english",
+        "transcriptions": {
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "a single photograph made from film, or a photograph of a painting or other work of art",
+        "guide_word": "picture",
+        "alternative": "",
+        "grammar": [
+          "C"
+        ],
+        "examples": [
+          "We made extra prints of the baby to send out with the birth announcement."
+        ]
+      }
+    },
+    {
+      "index": 17,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "american-english",
+        "transcriptions": {
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "A print is also a picture made by pressing paper or other material against a special surface covered with ink",
+        "guide_word": "picture",
+        "alternative": "",
+        "grammar": [
+          "C"
+        ],
+        "examples": [
+          "woodcut prints"
+        ]
+      }
+    },
+    {
+      "index": 18,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "american-english",
+        "transcriptions": {
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "a pattern produced on a piece of cloth, or cloth having such a pattern",
+        "guide_word": "pattern",
+        "alternative": "",
+        "grammar": [
+          "C"
+        ],
+        "examples": [
+          "a print dress"
+        ]
+      }
+    },
+    {
+      "index": 19,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "american-english",
+        "transcriptions": {
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "a mark left on a surface where something has been pressed on it",
+        "guide_word": "mark",
+        "alternative": "",
+        "grammar": [
+          "C"
+        ],
+        "examples": [
+          "The dog left prints all over the kitchen floor."
+        ]
+      }
+    },
+    {
+      "index": 20,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "american-english",
+        "transcriptions": {
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "A print is also a fingerprint.",
+        "guide_word": "mark",
+        "alternative": "",
+        "grammar": [
+          "C"
+        ]
+      }
+    },
+    {
+      "index": 21,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "american-english",
+        "transcriptions": {
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "text or images that are produced on paper or other material by printing",
+        "guide_word": "text",
+        "alternative": "",
+        "grammar": [
+          "U"
+        ]
+      }
+    },
+    {
+      "index": 22,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "american-english",
+        "transcriptions": {
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "If something is in print, it is published and available to buy",
+        "guide_word": "text",
+        "alternative": "",
+        "examples": [
+          "Is the book still in print?"
+        ]
+      }
+    },
+    {
+      "index": 23,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "american-english",
+        "transcriptions": {
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "If something is in print, it is published and available to buy",
+        "guide_word": "text",
+        "alternative": "",
+        "examples": [
+          "Is the book still in print?"
+        ]
+      }
+    },
+    {
+      "index": 24,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "american-english",
+        "transcriptions": {
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "If a book is out of print, it is no longer available from a publisher",
+        "guide_word": "text",
+        "alternative": "",
+        "examples": [
+          "I’m afraid you can’t get that book – it’s out of print."
+        ]
+      }
+    },
+    {
+      "index": 25,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "american-english",
+        "transcriptions": {
+          "us": [
+            "prɪnt"
+          ]
+        },
+        "definition": "If a book is out of print, it is no longer available from a publisher",
+        "guide_word": "text",
+        "alternative": "",
+        "examples": [
+          "I’m afraid you can’t get that book – it’s out of print."
+        ]
+      }
+    },
+    {
+      "index": 26,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "verb"
+        ],
+        "language": "business-english",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": null
+        },
+        "definition": "to produce writing or images on paper or other material with a machine",
+        "guide_word": "",
+        "alternative": "",
+        "grammar": [
+          "I",
+          "T"
+        ],
+        "examples": [
+          "print sth on sth The leaflets will be printed on recycled paper.",
+          "I'm waiting for the document to print.",
+          "I had some business cards printed.",
+          "Words found in the glossary are printed in bold the first time they appear in the prospectus."
+        ]
+      }
+    },
+    {
+      "index": 27,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "verb"
+        ],
+        "language": "business-english",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": null
+        },
+        "definition": "to include a piece of writing in a newspaper or magazine",
+        "guide_word": "",
+        "alternative": "",
+        "grammar": [
+          "T"
+        ],
+        "examples": [
+          "No one was willing to print the story without identifying its source.",
+          "The article was printed in Tuesday's paper."
+        ]
+      }
+    },
+    {
+      "index": 28,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "verb"
+        ],
+        "language": "business-english",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": null
+        },
+        "definition": "to produce a newspaper, magazine, or book in large quantities",
+        "guide_word": "",
+        "alternative": "",
+        "grammar": [
+          "T"
+        ],
+        "examples": [
+          "20,000 copies of the novel will be printed in hardback."
+        ]
+      }
+    },
+    {
+      "index": 29,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "verb"
+        ],
+        "language": "business-english",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": null
+        },
+        "definition": "to write without joining the letters together",
+        "guide_word": "",
+        "alternative": "",
+        "grammar": [
+          "I",
+          "T"
+        ],
+        "examples": [
+          "Please print your name clearly below your signature."
+        ]
+      }
+    },
+    {
+      "index": 30,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "business-english",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": null
+        },
+        "definition": "letters, numbers, words, or symbols that have been produced on paper by a machine using ink",
+        "guide_word": "",
+        "alternative": "",
+        "grammar": [
+          "U"
+        ],
+        "examples": [
+          "The report is being published both in print and online."
+        ]
+      }
+    },
+    {
+      "index": 31,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "business-english",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": null
+        },
+        "definition": "newspapers, books, and magazines",
+        "guide_word": "",
+        "alternative": "",
+        "grammar": [
+          "U"
+        ],
+        "examples": [
+          "Television, radio, and print are inundated with advertisements for Web sites."
+        ]
+      }
+    },
+    {
+      "index": 32,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "business-english",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": null
+        },
+        "definition": "if a book is in print, it is possible to buy a new copy of it, and if it is out of print, it is not now possible",
+        "guide_word": "",
+        "alternative": "",
+        "grammar": [
+          "U"
+        ],
+        "examples": [
+          "Is her work still in print?",
+          "That book has been out of print for years."
+        ]
+      }
+    },
+    {
+      "index": 33,
+      "lemma": {
+        "lemma": "print",
+        "part_of_speech": [
+          "noun"
+        ],
+        "language": "business-english",
+        "transcriptions": {
+          "uk": [
+            "prɪnt"
+          ],
+          "us": null
+        },
+        "definition": "if a book is in print, it is possible to buy a new copy of it, and if it is out of print, it is not now possible",
+        "guide_word": "",
+        "alternative": "",
+        "grammar": [
+          "U"
+        ],
+        "examples": [
+          "Is her work still in print?",
+          "That book has been out of print for years."
+        ]
+      }
+    }
+  ]
+}
