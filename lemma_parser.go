@@ -1,7 +1,6 @@
 package camgo
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"regexp"
@@ -11,15 +10,6 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/andybalholm/cascadia"
 )
-
-func debugPrint(v interface{}) {
-	s, err := json.MarshalIndent(v, "", "\t")
-	if err != nil {
-		fmt.Println("error: ", err)
-		return
-	}
-	fmt.Printf("%s\n", s)
-}
 
 var _ = goquery.NewDocumentFromReader
 
@@ -71,7 +61,6 @@ func getLanguageFromDataID(dictionary *goquery.Selection) (string, error) {
 }
 
 var dictionaryEntryMatcher = cascadia.MustCompile(strings.Join([]string{
-	//`div[class*="pos-header"][class*="dpos-h"]`,
 	`div[class*="entry-body__el"]>div[class*="pos-header"]`,
 	`div[class="pv-block"]`,
 	`div[class^="idiom-block"]`,
@@ -108,7 +97,6 @@ var dsenseMatcher = cascadia.MustCompile(`div.dsense`)
 var posHeaderMatcher = cascadia.MustCompile(`div.pos-header`)
 
 func parsePosHeader(lctx *Lemma, posHeader *goquery.Selection) ([]*Lemma, error) {
-	//posHeader := entryBodyEl.ChildrenMatcher(posHeaderMatcher)
 	if err := updateLemmaWithHeader(lctx, posHeader); err != nil {
 		return nil, err
 	}

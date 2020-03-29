@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type JsonCase struct {
+type JSONCase struct {
 	Name    string `json:"-"`
 	Path    string `json:"-"`
 	Length  int
@@ -48,7 +48,7 @@ func loadTestCases(jsonPath, htmlPath string) (*TestCases, error) {
 	if err != nil {
 		return nil, fmt.Errorf("no json files was found in: %s", jsonPath)
 	}
-	jsonCases, err := loadJsonCases(jsonFiles)
+	jsonCases, err := loadJSONCases(jsonFiles)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load json cases: %w", err)
 	}
@@ -60,9 +60,9 @@ func loadTestCases(jsonPath, htmlPath string) (*TestCases, error) {
 		case "lemmas":
 			var lemmaCases []*LemmaCase
 			if err := json.Unmarshal(*jsonCase.Content, &lemmaCases); err != nil {
-				return nil, fmt.Errorf("Can not parse lemma test cases for '%s': %w", jsonCase.Name, err)
+				return nil, fmt.Errorf("can not parse lemma test cases for '%s': %w", jsonCase.Name, err)
 			}
-			htmlContent, err := loadHtmlContent(htmlPath, jsonCase.Name)
+			htmlContent, err := loadHTMLContent(htmlPath, jsonCase.Name)
 			if err != nil {
 				return nil, fmt.Errorf("failed to load html content for test '%s': %w", jsonCase.Name, err)
 			}
@@ -85,7 +85,7 @@ func loadTestCases(jsonPath, htmlPath string) (*TestCases, error) {
 	}, nil
 }
 
-func loadHtmlContent(htmlPath, name string) ([]byte, error) {
+func loadHTMLContent(htmlPath, name string) ([]byte, error) {
 	path := filepath.Join(htmlPath, name+".html")
 	content, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -94,14 +94,14 @@ func loadHtmlContent(htmlPath, name string) ([]byte, error) {
 	return content, nil
 }
 
-func loadJsonCases(paths []string) ([]*JsonCase, error) {
-	var jsonCases []*JsonCase
+func loadJSONCases(paths []string) ([]*JSONCase, error) {
+	var jsonCases []*JSONCase
 	for _, path := range paths {
 		file, err := os.Open(path)
 		if err != nil {
 			return nil, fmt.Errorf("can open file '%s': %w", path, err)
 		}
-		var jsonCase JsonCase
+		var jsonCase JSONCase
 		if err := json.NewDecoder(file).Decode(&jsonCase); err != nil {
 			return nil, fmt.Errorf("can not decode file '%s': %w", path, err)
 		}
@@ -118,7 +118,7 @@ func TestMain(m *testing.M) {
 	cases, err := loadTestCases("testdata/json", "testdata/html")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Can not load test files: %s\n", err)
-		os.Exit(1)
+		os.Exit(1) //nolint:gomnd // status codes is common knowledge
 	}
 	LoadedCases = cases
 	os.Exit(m.Run())
@@ -142,5 +142,4 @@ func TestLemmaParser(t *testing.T) {
 			}
 		})
 	}
-
 }
