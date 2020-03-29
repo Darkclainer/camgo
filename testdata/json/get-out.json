@@ -1,0 +1,94 @@
+{
+  "length": 4,
+  "type": "lemmas",
+  "content": [
+    {
+      "index": 0,
+      "lemma": {
+        "lemma": "get out",
+        "part_of_speech": [
+          "phrasal verb"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "ɡet"
+          ],
+          "us": [
+            "ɡet"
+          ]
+        },
+        "definition": "to leave a closed vehicle, building, etc.",
+        "guide_word": "leave",
+        "alternative": "",
+        "examples": [
+          "I'll get out when you stop at the traffic lights."
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "lemma": {
+        "lemma": "get out",
+        "part_of_speech": [
+          "phrasal verb"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "ɡet"
+          ],
+          "us": [
+            "ɡet"
+          ]
+        },
+        "definition": "to go out to different places, spend time with people, and enjoy yourself",
+        "guide_word": "visit places",
+        "alternative": "",
+        "examples": [
+          "We don't get out much since we had the children."
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "lemma": {
+        "lemma": "get out",
+        "part_of_speech": [
+          "phrasal verb"
+        ],
+        "language": "british",
+        "transcriptions": {
+          "uk": [
+            "ɡet"
+          ],
+          "us": [
+            "ɡet"
+          ]
+        },
+        "definition": "If news or information gets out, people hear about it although someone is trying to keep it secret",
+        "guide_word": "become known",
+        "alternative": "",
+        "examples": [
+          "I don't want it to get out that I'm leaving before I've had a chance to tell Anthony."
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "lemma": {
+        "lemma": "get out!",
+        "part_of_speech": [
+          "idiom"
+        ],
+        "language": "british",
+        "definition": "said when you do not believe or agree with what someone is saying",
+        "guide_word": "",
+        "alternative": "",
+        "examples": [
+          "\"Ralph painted that, you know.\" \"Get out!\""
+        ]
+      }
+    }
+  ]
+}

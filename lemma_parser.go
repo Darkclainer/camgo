@@ -71,9 +71,10 @@ func getLanguageFromDataID(dictionary *goquery.Selection) (string, error) {
 }
 
 var dictionaryEntryMatcher = cascadia.MustCompile(strings.Join([]string{
-	`div[class*="pos-header"][class*="dpos-h"]`,
+	//`div[class*="pos-header"][class*="dpos-h"]`,
+	`div[class*="entry-body__el"]>div[class*="pos-header"]`,
 	`div[class="pv-block"]`,
-	`div[class="idiom-block"]`,
+	`div[class^="idiom-block"]`,
 }, ", "))
 
 func parseDictionary(lctx *Lemma, dictionary *goquery.Selection) ([]*Lemma, error) {
@@ -104,8 +105,10 @@ func parseDictionary(lctx *Lemma, dictionary *goquery.Selection) ([]*Lemma, erro
 }
 
 var dsenseMatcher = cascadia.MustCompile(`div.dsense`)
+var posHeaderMatcher = cascadia.MustCompile(`div.pos-header`)
 
 func parsePosHeader(lctx *Lemma, posHeader *goquery.Selection) ([]*Lemma, error) {
+	//posHeader := entryBodyEl.ChildrenMatcher(posHeaderMatcher)
 	if err := updateLemmaWithHeader(lctx, posHeader); err != nil {
 		return nil, err
 	}
@@ -224,7 +227,7 @@ func parseDSense(lctx *Lemma, dsense *goquery.Selection) ([]*Lemma, error) {
 var guidewordMatcher = cascadia.MustCompile(`span.guideword`)
 
 func getGuideWordFromDSenseH(dsenseh *goquery.Selection) string {
-	guideword := dsenseh.ChildrenMatcher(guidewordMatcher)
+	guideword := dsenseh.FindMatcher(guidewordMatcher)
 	return strings.ToLower(guideword.Children().Text())
 }
 
@@ -293,11 +296,50 @@ func parsePhraseBlock(lctx *Lemma, phraseBlock *goquery.Selection) ([]*Lemma, er
 	return enrichLemmas(lctx, defBlocks, parseDefBlock)
 }
 
-func parsePVBlock(lctx *Lemma, dictionary *goquery.Selection) ([]*Lemma, error) {
-	println("pv-block")
-	return nil, nil
+var pvBodyMatcher = cascadia.MustCompile(`span.pv-body`)
+
+func parsePVBlock(lctx *Lemma, pvBlock *goquery.Selection) ([]*Lemma, error) {
+	if err := updateLemmaWithPVBlock(lctx, pvBlock); err != nil {
+		return nil, err
+	}
+
+	pvBody := pvBlock.ChildrenMatcher(pvBodyMatcher)
+	dsenses := pvBody.ChildrenMatcher(dsenseMatcher)
+	return enrichLemmas(lctx, dsenses, parseDSense)
 }
-func parseIdiomBlock(lctx *Lemma, dictionary *goquery.Selection) ([]*Lemma, error) {
-	println("idiom-block")
-	return nil, nil
+
+var diTitleMatcher = cascadia.MustCompile(`div.di-title`)
+var diInfoMatcher = cascadia.MustCompile(`span.di-info`)
+var ancInfoHeadMatcher = cascadia.MustCompile(`span.anc-info-head`)
+
+func updateLemmaWithPVBlock(lctx *Lemma, pvBlock *goquery.Selection) error {
+	diTitle := pvBlock.ChildrenMatcher(diTitleMatcher).Text()
+	if diTitle == "" {
+		return fmt.Errorf(".pv-block hast not .headword elements")
+	}
+	lctx.Lemma = diTitle
+
+	posHeader := pvBlock.ChildrenMatcher(diInfoMatcher).ChildrenMatcher(posHeaderMatcher)
+
+	if err := updateLemmaWithPosgram(lctx, posHeader.ChildrenMatcher(ancInfoHeadMatcher)); err != nil {
+		return err
+	}
+
+	lctx.Transcriptions = getTranscriptions(posHeader)
+	return nil
+}
+
+var idiomBodyMatcher = cascadia.MustCompile(`span.idiom-body`)
+
+func parseIdiomBlock(lctx *Lemma, idiomBlock *goquery.Selection) ([]*Lemma, error) {
+	diTitle := idiomBlock.ChildrenMatcher(diTitleMatcher).Text()
+	if diTitle == "" {
+		return nil, fmt.Errorf(".idiom-block hast not .headword elements")
+	}
+	lctx.Lemma = diTitle
+	lctx.PartOfSpeech = []string{"idiom"}
+
+	idiomBody := idiomBlock.ChildrenMatcher(idiomBodyMatcher)
+	dsenses := idiomBody.ChildrenMatcher(dsenseMatcher)
+	return enrichLemmas(lctx, dsenses, parseDSense)
 }
