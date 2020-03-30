@@ -11,8 +11,6 @@ import (
 	"github.com/andybalholm/cascadia"
 )
 
-var _ = goquery.NewDocumentFromReader
-
 type enrichFunc func(lctx *Lemma, sel *goquery.Selection) ([]*Lemma, error)
 
 func enrichLemmas(lctx *Lemma, sel *goquery.Selection, f enrichFunc) ([]*Lemma, error) {

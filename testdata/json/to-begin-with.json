@@ -1,0 +1,54 @@
+{
+  "length": 3,
+  "type": "lemmas",
+  "content": [
+    {
+      "index": 0,
+      "lemma": {
+        "lemma": "to begin with",
+        "part_of_speech": [
+          "idiom"
+        ],
+        "language": "british",
+        "definition": "at the start of a process, event, or situation",
+        "guide_word": "",
+        "alternative": "",
+        "examples": [
+          "There were six of us to begin with, then two people left."
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "lemma": {
+        "lemma": "to begin with",
+        "part_of_speech": [
+          "idiom"
+        ],
+        "language": "british",
+        "definition": "used to give the first important reason for something",
+        "guide_word": "",
+        "alternative": "",
+        "examples": [
+          "The hotel was awful! To begin with, our room was far too small."
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "lemma": {
+        "lemma": "to begin with",
+        "part_of_speech": [
+          "idiom"
+        ],
+        "language": "american-english",
+        "definition": "first",
+        "guide_word": "",
+        "alternative": "",
+        "examples": [
+          "We had an awful time! To begin with, Cameron got sick on the first day."
+        ]
+      }
+    }
+  ]
+}
