@@ -1,21 +1,23 @@
 package main
 
 import (
-	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
-	"io"
-	"io/ioutil"
-	"net/http"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/darkclainer/camgo"
 )
 
 const (
 	codeErrorArgs = iota + 1
+	codeNotFound
 	codeInternalError
+	timeoutSecounds = 10
 )
 
 func exitf(code int, format string, args ...interface{}) {
@@ -23,61 +25,32 @@ func exitf(code int, format string, args ...interface{}) {
 	os.Exit(code)
 }
 
-func downloadWord(query string) ([]byte, error) {
-	// TODO: check query
-	req, err := http.Get("https://dictionary.cambridge.org/dictionary/english/" + query)
-	if err != nil {
-		return nil, err
-	}
-	defer req.Body.Close()
-	bodyBytes, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		return nil, err
-	}
-	return bodyBytes, nil
-}
-
-func saveWord(path string, content []byte) {
-	if err := ioutil.WriteFile(path, content, 0660); err != nil {
-		exitf(codeInternalError, "can not save word to %s: %s\n",
-			path,
-			err.Error(),
-		)
-	}
-}
-
 func main() {
-	webWord := flag.String("w", "", "word that you want to search in the web")
-	localPath := flag.String("f", "", "Local html file for parsing")
-	savePath := flag.String("s", "", "name of file where parsed content will be saved")
+	query := flag.String("q", "", "query that you want to search in the web")
 	flag.Parse()
 
-	var input io.Reader
-	switch {
-	case *webWord != "" && *localPath != "":
-		exitf(codeErrorArgs, "both -w and -f can not be specified at the same time!\n")
-	case *webWord != "":
-		wordBytes, err := downloadWord(*webWord)
-		if err != nil {
-			exitf(codeInternalError, "can not download word %s: %s\n", *webWord, err.Error())
-		}
-		if *savePath != "" {
-			saveWord(*savePath, wordBytes)
-		}
-		input = ioutil.NopCloser(bytes.NewBuffer(wordBytes))
-	case *localPath != "":
-		file, err := os.Open(*localPath)
-		if err != nil {
-			exitf(codeErrorArgs, "can not open file %s: %s\n", *localPath, err.Error())
-		}
-		input = file
-	default:
-		exitf(codeErrorArgs, "you should specify either -w or -f\n")
+	if *query == "" {
+		exitf(codeErrorArgs, "you should specify arguments\n")
 	}
+	querier := camgo.NewQuerier(nil, &camgo.QuerierConfig{
+		ExtraHeader: map[string]string{
+			"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:74.0) Gecko/20100101 Firefox/74.0",
+		},
+	})
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*timeoutSecounds)
+	defer cancel()
 
-	lemmas, err := camgo.ParseLemmaHTML(input)
+	lemmaID, err := querier.Search(ctx, *query)
 	if err != nil {
-		exitf(codeErrorArgs, "can not parse word: %s\n", err.Error())
+		var suggestions camgo.ErrLemmaNotFound
+		if !errors.As(err, &suggestions) {
+			exitf(codeInternalError, "unknown error: %s\n", err)
+		}
+		exitf(codeNotFound, "May be you mean:\n%s\n", strings.Join(suggestions, "\n"))
+	}
+	lemmas, err := querier.GetLemma(ctx, lemmaID)
+	if err != nil {
+		exitf(codeInternalError, "unknown error: %s\n", err)
 	}
 	s, err := json.MarshalIndent(lemmas, "", "\t")
 	if err != nil {
