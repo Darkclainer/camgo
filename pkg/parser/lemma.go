@@ -1,4 +1,4 @@
-package camgo
+package parser
 
 type Lemma struct {
 	Lemma          string              `json:"lemma"`

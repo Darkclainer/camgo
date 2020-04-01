@@ -1,4 +1,4 @@
-package camgo
+package client
 
 import (
 	"context"
@@ -8,6 +8,8 @@ import (
 	"path"
 	"strings"
 	"time"
+
+	"github.com/darkclainer/camgo/pkg/parser"
 )
 
 const (
@@ -60,13 +62,13 @@ func getDefaultQuerierClient() *http.Client {
 	}
 }
 
-func (q *Querier) GetLemma(ctx context.Context, lemmaID string) ([]*Lemma, error) {
+func (q *Querier) GetLemma(ctx context.Context, lemmaID string) ([]*parser.Lemma, error) {
 	response, err := q.get(ctx, q.newLemmaURL(lemmaID), http.StatusOK)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get lemma: %w", err)
 	}
 	defer response.Body.Close()
-	lemmas, err := ParseLemmaHTML(response.Body)
+	lemmas, err := parser.ParseLemmaHTML(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +115,7 @@ func (q *Querier) getSuggestions(ctx context.Context, urlSuggestions string) ([]
 		return nil, fmt.Errorf("failed to perform get: %w", err)
 	}
 	defer response.Body.Close()
-	suggestions, err := ParseSuggestionHTML(response.Body)
+	suggestions, err := parser.ParseSuggestionHTML(response.Body)
 	if err != nil {
 		return nil, err
 	}

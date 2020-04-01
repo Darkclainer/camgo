@@ -1,4 +1,4 @@
-package camgo
+package parser
 
 import (
 	"bytes"

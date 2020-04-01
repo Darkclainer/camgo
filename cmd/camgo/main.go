@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/darkclainer/camgo"
+	"github.com/darkclainer/camgo/pkg/client"
 )
 
 const (
@@ -32,7 +32,7 @@ func main() {
 	if *query == "" {
 		exitf(codeErrorArgs, "you should specify arguments\n")
 	}
-	querier := camgo.NewQuerier(nil, &camgo.QuerierConfig{
+	querier := client.NewQuerier(nil, &client.QuerierConfig{
 		ExtraHeader: map[string]string{
 			"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:74.0) Gecko/20100101 Firefox/74.0",
 		},
@@ -42,7 +42,7 @@ func main() {
 
 	lemmaID, err := querier.Search(ctx, *query)
 	if err != nil {
-		var suggestions camgo.ErrLemmaNotFound
+		var suggestions client.ErrLemmaNotFound
 		if !errors.As(err, &suggestions) {
 			exitf(codeInternalError, "unknown error: %s\n", err)
 		}
