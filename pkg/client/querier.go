@@ -6,8 +6,11 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"runtime"
 	"strings"
 	"time"
+
+	"github.com/gammazero/workerpool"
 
 	"github.com/darkclainer/camgo/pkg/parser"
 )
@@ -33,11 +36,13 @@ type QuerierConfig struct {
 	ExtraHeader map[string]string
 	Timeout     time.Duration
 	Host        string
+	MaxWorkers  int
 }
 
 type Querier struct {
 	client *http.Client
 	config *QuerierConfig
+	pool   *workerpool.WorkerPool
 }
 
 func NewQuerier(client *http.Client, config *QuerierConfig) *Querier {
@@ -47,9 +52,13 @@ func NewQuerier(client *http.Client, config *QuerierConfig) *Querier {
 	if config.Host == "" {
 		config.Host = defaultHost
 	}
+	if config.MaxWorkers < 1 {
+		config.MaxWorkers = runtime.NumCPU()
+	}
 	return &Querier{
 		client: client,
 		config: config,
+		pool:   workerpool.New(config.MaxWorkers),
 	}
 }
 
@@ -68,7 +77,11 @@ func (q *Querier) GetLemma(ctx context.Context, lemmaID string) ([]*parser.Lemma
 		return nil, fmt.Errorf("failed to get lemma: %w", err)
 	}
 	defer response.Body.Close()
-	lemmas, err := parser.ParseLemmaHTML(response.Body)
+	var lemmas []*parser.Lemma
+	// Use pool here, because it's heavy cpu bound task
+	q.pool.SubmitWait(func() {
+		lemmas, err = parser.ParseLemmaHTML(response.Body)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +128,10 @@ func (q *Querier) getSuggestions(ctx context.Context, urlSuggestions string) ([]
 		return nil, fmt.Errorf("failed to perform get: %w", err)
 	}
 	defer response.Body.Close()
-	suggestions, err := parser.ParseSuggestionHTML(response.Body)
+	var suggestions []string
+	q.pool.SubmitWait(func() {
+		suggestions, err = parser.ParseSuggestionHTML(response.Body)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -172,4 +188,10 @@ func (q *Querier) newRequest(ctx context.Context, urlRequest string) (*http.Requ
 		req.Header.Add(key, value)
 	}
 	return req, nil
+}
+
+func (q *Querier) Close(ctx context.Context) error {
+	q.client.CloseIdleConnections()
+	q.pool.StopWait()
+	return nil
 }
