@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/darkclainer/camgo/pkg/client"
+	"github.com/darkclainer/camgo/pkg/querier"
 )
 
 const (
@@ -32,7 +32,7 @@ func main() {
 	if *query == "" {
 		exitf(codeErrorArgs, "you should specify arguments\n")
 	}
-	querier := client.NewQuerier(nil, &client.QuerierConfig{
+	q := querier.NewQuerier(nil, &querier.QuerierConfig{
 		ExtraHeader: map[string]string{
 			"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:74.0) Gecko/20100101 Firefox/74.0",
 		},
@@ -40,15 +40,15 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*timeoutSecounds)
 	defer cancel()
 
-	lemmaID, err := querier.Search(ctx, *query)
+	lemmaID, err := q.Search(ctx, *query)
 	if err != nil {
-		var suggestions client.ErrLemmaNotFound
+		var suggestions querier.ErrLemmaNotFound
 		if !errors.As(err, &suggestions) {
 			exitf(codeInternalError, "unknown error: %s\n", err)
 		}
 		exitf(codeNotFound, "May be you mean:\n%s\n", strings.Join(suggestions, "\n"))
 	}
-	lemmas, err := querier.GetLemma(ctx, lemmaID)
+	lemmas, err := q.GetLemma(ctx, lemmaID)
 	if err != nil {
 		exitf(codeInternalError, "unknown error: %s\n", err)
 	}
