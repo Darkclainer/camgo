@@ -44,31 +44,59 @@ func TestQueryCachedType(t *testing.T) {
 	}
 }
 
-func TestCachedQueryKey(t *testing.T) {
+func TestCachedKeys(t *testing.T) {
 	testCases := map[string]struct {
+		keyType  string
 		keyRaw   string
 		expected []byte
 		err      error
 	}{
 		"Cached query key": {
+			keyType:  "query",
 			keyRaw:   "key",
 			expected: []byte{byte(queryKey), 'k', 'e', 'y'},
 		},
 		"Cached query empty": {
+			keyType:  "query",
 			keyRaw:   "",
 			expected: []byte{byte(queryKey)},
+		},
+		"Cached lemma key": {
+			keyType:  "lemma",
+			keyRaw:   "key",
+			expected: []byte{byte(lemmaKey), 'k', 'e', 'y'},
+		},
+		"Cached lemma empty": {
+			keyType:  "lemma",
+			keyRaw:   "",
+			expected: []byte{byte(lemmaKey)},
 		},
 	}
 	for name := range testCases {
 		tc := testCases[name]
 		t.Run(name, func(t *testing.T) {
-			key := cachedQueryKey(tc.keyRaw)
-			marshaledKey, err := key.MarshalBinary()
+			var marshaledKey []byte
+			var err error
+			if tc.keyType == "query" { // nolint:goconst // test
+				key := cachedQueryKey(tc.keyRaw)
+				marshaledKey, err = key.MarshalBinary()
+			} else {
+				key := cachedLemmaKey(tc.keyRaw)
+				marshaledKey, err = key.MarshalBinary()
+			}
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expected, marshaledKey)
 
-			var unmarshaledKey cachedQueryKey
-			err = unmarshaledKey.UnmarshalBinary(marshaledKey)
+			var unmarshaledKey []byte
+			if tc.keyType == "query" {
+				var ukey cachedQueryKey
+				err = ukey.UnmarshalBinary(marshaledKey)
+				unmarshaledKey = []byte(ukey)
+			} else {
+				var ukey cachedLemmaKey
+				err = ukey.UnmarshalBinary(marshaledKey)
+				unmarshaledKey = []byte(ukey)
+			}
 			assert.NoError(t, err)
 			assert.Equal(t, tc.keyRaw, string(unmarshaledKey))
 		})
@@ -80,7 +108,7 @@ func TestUnmarshalKeyError(t *testing.T) {
 		data []byte
 		kt   keyType
 	}{
-		"Zero lenght": {
+		"Zero length": {
 			data: []byte{},
 		},
 		"Wrong key type": {
@@ -93,39 +121,6 @@ func TestUnmarshalKeyError(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			_, err := unmarshalKey(tc.data, tc.kt)
 			assert.Error(t, err)
-
-		})
-	}
-
-}
-
-func TestCachedLemmaKey(t *testing.T) {
-	testCases := map[string]struct {
-		keyRaw   string
-		expected []byte
-		err      error
-	}{
-		"Cached query key": {
-			keyRaw:   "key",
-			expected: []byte{byte(lemmaKey), 'k', 'e', 'y'},
-		},
-		"Cached query empty": {
-			keyRaw:   "",
-			expected: []byte{byte(lemmaKey)},
-		},
-	}
-	for name := range testCases {
-		tc := testCases[name]
-		t.Run(name, func(t *testing.T) {
-			key := cachedLemmaKey(tc.keyRaw)
-			marshaledKey, err := key.MarshalBinary()
-			assert.NoError(t, err)
-			assert.Equal(t, tc.expected, marshaledKey)
-
-			var unmarshaledKey cachedLemmaKey
-			err = unmarshaledKey.UnmarshalBinary(marshaledKey)
-			assert.NoError(t, err)
-			assert.Equal(t, tc.keyRaw, string(unmarshaledKey))
 		})
 	}
 }

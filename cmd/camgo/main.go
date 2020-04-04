@@ -32,7 +32,7 @@ func main() {
 	if *query == "" {
 		exitf(codeErrorArgs, "you should specify arguments\n")
 	}
-	q := querier.NewQuerier(nil, &querier.QuerierConfig{
+	q := querier.NewQuerier(nil, &querier.Config{
 		ExtraHeader: map[string]string{
 			"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:74.0) Gecko/20100101 Firefox/74.0",
 		},

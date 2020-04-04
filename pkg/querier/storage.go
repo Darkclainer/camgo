@@ -75,14 +75,14 @@ func (k *cachedLemmaKey) UnmarshalBinary(data []byte) error {
 }
 
 func marshalKey(k string, t keyType) ([]byte, error) {
-	result := make([]byte, 0, len(k)+1)
+	result := make([]byte, 0, len(k)+1) // nolint:gomnd // next line we will apend 1 byte
 	result = append(result, byte(t))
 	return append(result, []byte(k)...), nil
 }
 
 func unmarshalKey(data []byte, expected keyType) (string, error) {
-	if len(data) < 1 {
-		return "", errors.New("key lenght must be at least 1")
+	if len(data) == 0 {
+		return "", errors.New("key length must be at least 1")
 	}
 	if data[0] != byte(expected) {
 		return "", fmt.Errorf("key type doesn't equal to expected type")

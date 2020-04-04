@@ -32,27 +32,32 @@ func (e ErrLemmaNotFound) Suggestions() []string {
 	return e
 }
 
-type QuerierConfig struct {
+type Config struct {
+	// ExtraHeader specifies what header will be added to each request
 	ExtraHeader map[string]string
-	Timeout     time.Duration
-	Host        string
-	MaxWorkers  int
+	// Timeout specifies maximum wait time for each request
+	Timeout time.Duration
+	// Host specifies remote host to which request will be sent
+	Host string
+	// MaxWorkers specifies how many worker parse html content of page
+	// Zero value mean that it will be equal to number of logical CPU
+	MaxWorkers int
 }
 
 type Querier struct {
 	client *http.Client
-	config *QuerierConfig
+	config *Config
 	pool   *workerpool.WorkerPool
 }
 
-func NewQuerier(client *http.Client, config *QuerierConfig) *Querier {
+func NewQuerier(client *http.Client, config *Config) *Querier {
 	if client == nil {
 		client = getDefaultQuerierClient()
 	}
 	if config.Host == "" {
 		config.Host = defaultHost
 	}
-	if config.MaxWorkers < 1 {
+	if config.MaxWorkers < 1 { // nolint:gomnd // if number not specified
 		config.MaxWorkers = runtime.NumCPU()
 	}
 	return &Querier{
