@@ -23,17 +23,10 @@ const (
 	searchPath      = "/search/english/direct/"
 )
 
-var ErrEmptyLemmaID = errors.New("empty lemmaID")
-
-type ErrLemmaNotFound []string
-
-func (e ErrLemmaNotFound) Error() string {
-	return "lemma not found"
-}
-
-func (e ErrLemmaNotFound) Suggestions() []string {
-	return e
-}
+var (
+	ErrEmptyLemmaID = errors.New("empty lemmaID")
+	ErrSuggestions  = errors.New("suggestions exist")
+)
 
 type Config struct {
 	// ExtraHeader specifies what header will be added to each request
@@ -107,25 +100,25 @@ func (q *Querier) GetLemma(ctx context.Context, lemmaID string) ([]*parser.Lemma
 
 // Search returns lemmaID if found something
 // Also it can return ErrLemmaNotFound error if there is some suggestions
-func (q *Querier) Search(ctx context.Context, query string) (string, error) {
+func (q *Querier) Search(ctx context.Context, query string) (string, []string, error) {
 	redirect, err := q.getSearch(ctx, q.newSearchURL(query))
 	if err != nil {
-		return "", fmt.Errorf("can not perform search: %w", err)
+		return "", nil, fmt.Errorf("can not perform search: %w", err)
 	}
 	switch {
 	case strings.HasPrefix(redirect.Path, lemmaPath):
 		if strings.HasSuffix(redirect.Path, lemmaPath) {
-			return "", ErrEmptyLemmaID
+			return "", nil, ErrEmptyLemmaID
 		}
-		return path.Base(redirect.Path), nil
+		return path.Base(redirect.Path), nil, nil
 	case strings.HasPrefix(redirect.Path, suggestionPath):
 		suggestions, err := q.getSuggestions(ctx, redirect.String())
 		if err != nil {
-			return "", fmt.Errorf("can not get suggestions: %w", err)
+			return "", nil, fmt.Errorf("can not get suggestions: %w", err)
 		}
-		return "", ErrLemmaNotFound(suggestions)
+		return "", suggestions, ErrSuggestions
 	default:
-		return "", fmt.Errorf("uknown redirect: %s", redirect)
+		return "", nil, fmt.Errorf("uknown redirect: %s", redirect)
 	}
 }
 

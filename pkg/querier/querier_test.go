@@ -192,14 +192,13 @@ func TestQuerierSearch(t *testing.T) {
 			querier, clean := newTestQuerier(t, tc.queryFn, tc.suggestionFn, nil)
 			defer clean()
 
-			lemmaID, err := querier.Search(context.TODO(), tc.query)
+			lemmaID, suggestions, err := querier.Search(context.TODO(), tc.query)
 			if tc.err != nil {
 				assert.Error(t, err)
 				return
 			} else if len(tc.suggestions) > 0 {
-				var suggestions ErrLemmaNotFound
-				if errors.As(err, &suggestions) {
-					assert.Equal(t, tc.suggestions, suggestions.Suggestions())
+				if errors.Is(err, ErrSuggestions) {
+					assert.Equal(t, tc.suggestions, suggestions)
 					return
 				}
 				t.Errorf("suggestion must be returned, got: %v", err)
