@@ -11,6 +11,8 @@ import (
 	"github.com/darkclainer/camgo/pkg/parser"
 )
 
+//go:generate go run github.com/vektra/mockery/cmd/mockery -name QueryInterface -output ../mocks/
+
 type QueryInterface interface {
 	GetLemma(ctx context.Context, lemmaID string) ([]*parser.Lemma, error)
 	Search(ctx context.Context, query string) (string, []string, error)
@@ -62,10 +64,10 @@ func (c *Cached) Search(ctx context.Context, query string) (string, []string, er
 
 func (c *Cached) Close(ctx context.Context) error {
 	var errs []error
-	if closeErr := c.querier.Close(ctx); errs != nil {
+	if closeErr := c.querier.Close(ctx); closeErr != nil {
 		errs = append(errs, fmt.Errorf("querier close failed: %w", closeErr))
 	}
-	if closeErr := c.storage.Close(); errs != nil {
+	if closeErr := c.storage.Close(); closeErr != nil {
 		errs = append(errs, fmt.Errorf("storage close failed: %w", closeErr))
 	}
 	if len(errs) != 0 {

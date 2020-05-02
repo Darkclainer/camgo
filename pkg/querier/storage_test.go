@@ -31,7 +31,7 @@ func getStorage(t *testing.T) *Storage {
 func getBadgerInstance() (*badger.DB, error) {
 	var err error
 	badgerDB.init.Do(func() {
-		opt := badger.DefaultOptions("").WithInMemory(true)
+		opt := badger.DefaultOptions("").WithInMemory(true).WithLogger(nil)
 		badgerDB.db, err = badger.Open(opt)
 	})
 	if err != nil {
