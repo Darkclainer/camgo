@@ -2,6 +2,7 @@ package querier
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -10,55 +11,64 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gammazero/workerpool"
-
 	"github.com/darkclainer/camgo/pkg/parser"
+	"github.com/gammazero/workerpool"
 )
 
 const (
-	defaultHost    = "dictionary.cambridge.org"
-	lemmaPath      = "/dictionary/english/"
-	suggestionPath = "/spellcheck/english/"
-	searchPath     = "/search/english/direct/"
+	defaultHost     = "dictionary.cambridge.org"
+	defaultProtocol = "https"
+	lemmaPath       = "/dictionary/english/"
+	suggestionPath  = "/spellcheck/english/"
+	searchPath      = "/search/english/direct/"
 )
 
-type ErrLemmaNotFound []string
+var (
+	ErrEmptyLemmaID = errors.New("empty lemmaID")
+	ErrSuggestions  = errors.New("suggestions exist")
+)
 
-func (e ErrLemmaNotFound) Error() string {
-	return "lemma not found"
-}
-
-func (e ErrLemmaNotFound) Suggestions() []string {
-	return e
-}
-
-type QuerierConfig struct {
+type Config struct {
+	// ExtraHeader specifies what header will be added to each request
 	ExtraHeader map[string]string
-	Timeout     time.Duration
-	Host        string
-	MaxWorkers  int
+	// Timeout specifies maximum wait time for each request
+	Timeout time.Duration
+	// Host specifies remote host to which request will be sent
+	Host     string
+	Protocol string
+	// MaxWorkers specifies how many worker parse html content of page
+	// Zero value mean that it will be equal to number of logical CPU
+	MaxWorkers int
 }
 
 type Querier struct {
 	client *http.Client
-	config *QuerierConfig
+	config *Config
 	pool   *workerpool.WorkerPool
+	p      Parser
 }
 
-func NewQuerier(client *http.Client, config *QuerierConfig) *Querier {
+func NewQuerier(client *http.Client, p Parser, config *Config) *Querier {
 	if client == nil {
 		client = getDefaultQuerierClient()
+	}
+	if p == nil {
+		p = &HTMLParser{}
 	}
 	if config.Host == "" {
 		config.Host = defaultHost
 	}
-	if config.MaxWorkers < 1 {
+	if config.Protocol == "" {
+		config.Host = defaultProtocol
+	}
+	if config.MaxWorkers < 1 { // nolint:gomnd // if number not specified
 		config.MaxWorkers = runtime.NumCPU()
 	}
 	return &Querier{
 		client: client,
 		config: config,
 		pool:   workerpool.New(config.MaxWorkers),
+		p:      p,
 	}
 }
 
@@ -80,7 +90,7 @@ func (q *Querier) GetLemma(ctx context.Context, lemmaID string) ([]*parser.Lemma
 	var lemmas []*parser.Lemma
 	// Use pool here, because it's heavy cpu bound task
 	q.pool.SubmitWait(func() {
-		lemmas, err = parser.ParseLemmaHTML(response.Body)
+		lemmas, err = q.p.ParseLemma(response.Body)
 	})
 	if err != nil {
 		return nil, err
@@ -90,22 +100,25 @@ func (q *Querier) GetLemma(ctx context.Context, lemmaID string) ([]*parser.Lemma
 
 // Search returns lemmaID if found something
 // Also it can return ErrLemmaNotFound error if there is some suggestions
-func (q *Querier) Search(ctx context.Context, query string) (string, error) {
+func (q *Querier) Search(ctx context.Context, query string) (lemmadID string, suggestions []string, err error) {
 	redirect, err := q.getSearch(ctx, q.newSearchURL(query))
 	if err != nil {
-		return "", fmt.Errorf("can not perform search: %w", err)
+		return "", nil, fmt.Errorf("can not perform search: %w", err)
 	}
 	switch {
 	case strings.HasPrefix(redirect.Path, lemmaPath):
-		return path.Base(redirect.Path), nil
+		if strings.HasSuffix(redirect.Path, lemmaPath) {
+			return "", nil, ErrEmptyLemmaID
+		}
+		return path.Base(redirect.Path), nil, nil
 	case strings.HasPrefix(redirect.Path, suggestionPath):
 		suggestions, err := q.getSuggestions(ctx, redirect.String())
 		if err != nil {
-			return "", fmt.Errorf("can not get suggestions: %w", err)
+			return "", nil, fmt.Errorf("can not get suggestions: %w", err)
 		}
-		return "", ErrLemmaNotFound(suggestions)
+		return "", suggestions, ErrSuggestions
 	default:
-		return "", fmt.Errorf("uknown redirect: %s", redirect)
+		return "", nil, fmt.Errorf("uknown redirect: %s", redirect)
 	}
 }
 
@@ -115,7 +128,7 @@ func (q *Querier) getSearch(ctx context.Context, urlSearch string) (*url.URL, er
 		return nil, fmt.Errorf("failed to perform get: %w", err)
 	}
 	defer response.Body.Close()
-	redirect, err := url.Parse(response.Header.Get("Location"))
+	redirect, err := response.Location()
 	if err != nil {
 		return nil, fmt.Errorf("can not parse redirect url: %w", err)
 	}
@@ -130,7 +143,7 @@ func (q *Querier) getSuggestions(ctx context.Context, urlSuggestions string) ([]
 	defer response.Body.Close()
 	var suggestions []string
 	q.pool.SubmitWait(func() {
-		suggestions, err = parser.ParseSuggestionHTML(response.Body)
+		suggestions, err = q.p.ParseSuggestion(response.Body)
 	})
 	if err != nil {
 		return nil, err
@@ -174,7 +187,7 @@ func (q *Querier) newLemmaURL(lemmaID string) string {
 
 func (q *Querier) newURL() *url.URL {
 	return &url.URL{
-		Scheme: "https",
+		Scheme: q.config.Protocol,
 		Host:   q.config.Host,
 	}
 }
