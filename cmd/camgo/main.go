@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -40,12 +39,11 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*timeoutSecounds)
 	defer cancel()
 
-	lemmaID, err := q.Search(ctx, *query)
+	lemmaID, suggestions, err := q.Search(ctx, *query)
 	if err != nil {
-		var suggestions querier.ErrLemmaNotFound
-		if !errors.As(err, &suggestions) {
-			exitf(codeInternalError, "unknown error: %s\n", err)
-		}
+		exitf(codeInternalError, "unknown error: %s\n", err)
+	}
+	if len(suggestions) > 0 {
 		exitf(codeNotFound, "May be you mean:\n%s\n", strings.Join(suggestions, "\n"))
 	}
 	lemmas, err := q.GetLemma(ctx, lemmaID)
