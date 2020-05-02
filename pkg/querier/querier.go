@@ -100,7 +100,7 @@ func (q *Querier) GetLemma(ctx context.Context, lemmaID string) ([]*parser.Lemma
 
 // Search returns lemmaID if found something
 // Also it can return ErrLemmaNotFound error if there is some suggestions
-func (q *Querier) Search(ctx context.Context, query string) (string, []string, error) {
+func (q *Querier) Search(ctx context.Context, query string) (lemmadID string, suggestions []string, err error) {
 	redirect, err := q.getSearch(ctx, q.newSearchURL(query))
 	if err != nil {
 		return "", nil, fmt.Errorf("can not perform search: %w", err)

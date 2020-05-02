@@ -20,31 +20,21 @@ func (s *Storage) Close() error {
 	return s.DB.Close()
 }
 
-func (s *Storage) GetQuery(query string) (*cachedQuery, error) {
+func (s *Storage) GetQuery(query string) (*CachedQuery, error) {
 	key := marshalKey(query, queryKey)
-	var queryValue cachedQuery
-	err := s.DB.View(func(txn *badger.Txn) error {
-		item, err := txn.Get(key)
-		if err != nil {
-			return err
-		}
-		return item.Value(func(value []byte) error {
-			return json.Unmarshal(value, &queryValue)
-		})
-
-	})
-	if err != nil {
+	var queryValue CachedQuery
+	if err := s.getFromDB(key, &queryValue); err != nil {
 		return nil, err
 	}
 	return &queryValue, nil
 }
-func (s *Storage) PutQuery(query string, lemmaID string, suggestions []string, queryErr error) error {
+func (s *Storage) PutQuery(query, lemmaID string, suggestions []string, queryErr error) error {
 	key := marshalKey(query, queryKey)
 	var errString string
 	if queryErr != nil {
 		errString = queryErr.Error()
 	}
-	value := cachedQuery{
+	value := CachedQuery{
 		LemmaID:     lemmaID,
 		Suggestions: suggestions,
 		Error:       errString,
@@ -62,31 +52,35 @@ func (s *Storage) PutQuery(query string, lemmaID string, suggestions []string, q
 		return txn.SetEntry(entry)
 	})
 }
-func (s *Storage) GetLemma(lemmaID string) (*cachedLemma, error) {
+
+func (s *Storage) GetLemma(lemmaID string) (*CachedLemma, error) {
 	key := marshalKey(lemmaID, lemmaKey)
-	var lemmaValue cachedLemma
-	err := s.DB.View(func(txn *badger.Txn) error {
+	var lemmaValue CachedLemma
+	if err := s.getFromDB(key, &lemmaValue); err != nil {
+		return nil, err
+	}
+	return &lemmaValue, nil
+}
+
+func (s *Storage) getFromDB(key []byte, vPtr interface{}) error {
+	return s.DB.View(func(txn *badger.Txn) error {
 		item, err := txn.Get(key)
 		if err != nil {
 			return err
 		}
 		return item.Value(func(value []byte) error {
-			return json.Unmarshal(value, &lemmaValue)
+			return json.Unmarshal(value, vPtr)
 		})
-
 	})
-	if err != nil {
-		return nil, err
-	}
-	return &lemmaValue, nil
 }
+
 func (s *Storage) PutLemma(lemmaID string, lemmas []*parser.Lemma, lemmaErr error) error {
 	var errString string
 	if lemmaErr != nil {
 		errString = lemmaErr.Error()
 	}
 	key := marshalKey(lemmaID, lemmaKey)
-	value := cachedLemma{
+	value := CachedLemma{
 		Lemmas:    lemmas,
 		Error:     errString,
 		CreatedAt: time.Now(),
@@ -111,24 +105,24 @@ const (
 	lemmaKey
 )
 
-type cachedQuery struct {
+type CachedQuery struct {
 	LemmaID     string
 	Suggestions []string
 	Error       string
 	CreatedAt   time.Time
 }
 
-func (cq *cachedQuery) Return() (string, []string, error) {
+func (cq *CachedQuery) Return() (lemmaID string, suggestions []string, err error) {
 	return cq.LemmaID, cq.Suggestions, errors.New(cq.Error)
 }
 
-type cachedLemma struct {
+type CachedLemma struct {
 	Lemmas    []*parser.Lemma
 	Error     string
 	CreatedAt time.Time
 }
 
-func (cl *cachedLemma) Return() ([]*parser.Lemma, error) {
+func (cl *CachedLemma) Return() ([]*parser.Lemma, error) {
 	return cl.Lemmas, errors.New(cl.Error)
 }
 

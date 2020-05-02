@@ -22,11 +22,9 @@ func errorRequestf(t *testing.T, w http.ResponseWriter, format string, args ...i
 	http.Error(w, str, http.StatusInternalServerError)
 }
 
-func newTestQuerier(
+func newTestQuerier( // nolint:gocritic // test
 	t *testing.T,
-	queryFn map[string]http.HandlerFunc,
-	suggestionFn map[string]http.HandlerFunc,
-	lemmaFn map[string]http.HandlerFunc,
+	queryFn, suggestionFn, lemmaFn map[string]http.HandlerFunc,
 ) (
 	*Querier,
 	func(),
@@ -45,7 +43,6 @@ func newTestQuerier(
 			return
 		}
 		fn(w, r)
-
 	})
 	mux.HandleFunc(searchPath, func(w http.ResponseWriter, r *http.Request) {
 		queryValues := r.URL.Query()
@@ -60,7 +57,6 @@ func newTestQuerier(
 			return
 		}
 		fn(w, r)
-
 	})
 	mux.HandleFunc(lemmaPath, func(w http.ResponseWriter, r *http.Request) {
 		rawPath := r.URL.Path
@@ -75,7 +71,6 @@ func newTestQuerier(
 			return
 		}
 		fn(w, r)
-
 	})
 	server := httptest.NewServer(mux)
 	client := server.Client()
@@ -102,7 +97,7 @@ func redirectSuggestions(w http.ResponseWriter, r *http.Request, query string, s
 	http.Redirect(w, r, u.String(), status)
 }
 
-func TestQuerierSearch(t *testing.T) {
+func TestQuerierSearch(t *testing.T) { // nolint:funlen // test
 	testCases := map[string]struct {
 		query        string
 		lemmaID      string
@@ -193,18 +188,18 @@ func TestQuerierSearch(t *testing.T) {
 			defer clean()
 
 			lemmaID, suggestions, err := querier.Search(context.TODO(), tc.query)
-			if tc.err != nil {
+			switch {
+			case tc.err != nil:
 				assert.Error(t, err)
 				return
-			} else if len(tc.suggestions) > 0 {
+			case len(tc.suggestions) > 0:
 				if errors.Is(err, ErrSuggestions) {
 					assert.Equal(t, tc.suggestions, suggestions)
 					return
 				}
 				t.Errorf("suggestion must be returned, got: %v", err)
 				return
-
-			} else {
+			default:
 				assert.NoError(t, err)
 			}
 			assert.Equal(t, tc.lemmaID, lemmaID)
@@ -213,7 +208,7 @@ func TestQuerierSearch(t *testing.T) {
 }
 func TestQuerierGetLemma(t *testing.T) {
 	testLemmas := []*parser.Lemma{
-		&parser.Lemma{
+		{
 			Lemma:     "test lemma",
 			GuideWord: "hello",
 		},
@@ -231,7 +226,6 @@ func TestQuerierGetLemma(t *testing.T) {
 				"hello": func(w http.ResponseWriter, r *http.Request) {
 					err := json.NewEncoder(w).Encode(testLemmas)
 					assert.NoError(t, err)
-
 				},
 			},
 		},
@@ -264,9 +258,8 @@ func TestQuerierGetLemma(t *testing.T) {
 			if tc.err != nil {
 				assert.Error(t, err)
 				return
-			} else {
-				assert.NoError(t, err)
 			}
+			assert.NoError(t, err)
 			assert.Equal(t, tc.lemmas, lemmas)
 		})
 	}

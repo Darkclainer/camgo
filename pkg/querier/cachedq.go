@@ -40,13 +40,13 @@ func (c *Cached) GetLemma(ctx context.Context, lemmaID string) ([]*parser.Lemma,
 		return nil, err
 	}
 	lemmas, err := c.querier.GetLemma(ctx, lemmaID)
-	if err := c.storage.PutLemma(lemmaID, lemmas, err); err != nil {
+	if dbErr := c.storage.PutLemma(lemmaID, lemmas, err); dbErr != nil { // nolint:staticcheck // todo
 		// TODO: log this event
 	}
 	return lemmas, err
 }
 
-func (c *Cached) Search(ctx context.Context, query string) (string, []string, error) {
+func (c *Cached) Search(ctx context.Context, query string) (lemmaID string, suggestions []string, err error) {
 	cached, err := c.storage.GetQuery(query)
 	if err == nil {
 		return cached.Return()
@@ -55,8 +55,8 @@ func (c *Cached) Search(ctx context.Context, query string) (string, []string, er
 		return "", nil, err
 	}
 	// err is ErrKeyNotFound
-	lemmaID, suggestions, err := c.querier.Search(ctx, query)
-	if err := c.storage.PutQuery(query, lemmaID, suggestions, err); err != nil {
+	lemmaID, suggestions, err = c.querier.Search(ctx, query)
+	if dbErr := c.storage.PutQuery(query, lemmaID, suggestions, err); dbErr != nil { // nolint:staticcheck // todo
 		// TODO: log this event
 	}
 	return lemmaID, suggestions, err
@@ -76,7 +76,7 @@ func (c *Cached) Close(ctx context.Context) error {
 			strErrs = append(strErrs, e.Error())
 		}
 		summary := strings.Join(strErrs, " AND ")
-		return fmt.Errorf("while closing next errors happend: %s", summary)
+		return fmt.Errorf("while closing next errors happened: %s", summary)
 	}
 	return nil
 }

@@ -16,7 +16,7 @@ import (
 func TestCachedGetLemma(t *testing.T) {
 	storage := getStorage(t)
 	expectedLemmas := []*parser.Lemma{
-		&parser.Lemma{
+		{
 			Lemma: "mylemma",
 		},
 	}

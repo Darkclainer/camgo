@@ -72,6 +72,7 @@ func TestQuery(t *testing.T) {
 		},
 	}
 	for name := range testCases {
+		name := name
 		tc := testCases[name]
 		t.Run(name, func(t *testing.T) {
 			testStarted := time.Now()
@@ -79,7 +80,7 @@ func TestQuery(t *testing.T) {
 			if tc.errorMsg != "" {
 				queryErr = errors.New(tc.errorMsg)
 			}
-			expectedQuery := &cachedQuery{
+			expectedQuery := &CachedQuery{
 				LemmaID:     tc.lemmaID,
 				Suggestions: tc.suggestions,
 				Error:       tc.errorMsg,
@@ -111,7 +112,7 @@ func TestLemma(t *testing.T) {
 	}{
 		"simple lemma": {
 			lemmas: []*parser.Lemma{
-				&parser.Lemma{
+				{
 					Lemma: "hello",
 				},
 			},
@@ -121,6 +122,7 @@ func TestLemma(t *testing.T) {
 		},
 	}
 	for name := range testCases {
+		name := name
 		tc := testCases[name]
 		t.Run(name, func(t *testing.T) {
 			testStarted := time.Now()
@@ -128,7 +130,7 @@ func TestLemma(t *testing.T) {
 			if tc.errorMsg != "" {
 				lemmaErr = errors.New(tc.errorMsg)
 			}
-			expectedLemma := &cachedLemma{
+			expectedLemma := &CachedLemma{
 				Lemmas: tc.lemmas,
 				Error:  tc.errorMsg,
 			}
