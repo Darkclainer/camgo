@@ -2,9 +2,10 @@ package querier
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
 
-	"github.com/dgraph-io/badger"
+	"github.com/dgraph-io/badger/v2"
 
 	"github.com/darkclainer/camgo/pkg/parser"
 )
@@ -39,10 +40,14 @@ func (s *Storage) GetQuery(query string) (*cachedQuery, error) {
 }
 func (s *Storage) PutQuery(query string, lemmaID string, suggestions []string, queryErr error) error {
 	key := marshalKey(query, queryKey)
+	var errString string
+	if queryErr != nil {
+		errString = queryErr.Error()
+	}
 	value := cachedQuery{
 		LemmaID:     lemmaID,
 		Suggestions: suggestions,
-		Error:       queryErr,
+		Error:       errString,
 		CreatedAt:   time.Now(),
 	}
 	data, err := json.Marshal(value)
@@ -76,10 +81,14 @@ func (s *Storage) GetLemma(lemmaID string) (*cachedLemma, error) {
 	return &lemmaValue, nil
 }
 func (s *Storage) PutLemma(lemmaID string, lemmas []*parser.Lemma, lemmaErr error) error {
+	var errString string
+	if lemmaErr != nil {
+		errString = lemmaErr.Error()
+	}
 	key := marshalKey(lemmaID, lemmaKey)
 	value := cachedLemma{
 		Lemmas:    lemmas,
-		Error:     lemmaErr,
+		Error:     errString,
 		CreatedAt: time.Now(),
 	}
 	data, err := json.Marshal(value)
@@ -105,22 +114,22 @@ const (
 type cachedQuery struct {
 	LemmaID     string
 	Suggestions []string
-	Error       error
+	Error       string
 	CreatedAt   time.Time
 }
 
 func (cq *cachedQuery) Return() (string, []string, error) {
-	return cq.LemmaID, cq.Suggestions, cq.Error
+	return cq.LemmaID, cq.Suggestions, errors.New(cq.Error)
 }
 
 type cachedLemma struct {
 	Lemmas    []*parser.Lemma
-	Error     error
+	Error     string
 	CreatedAt time.Time
 }
 
 func (cl *cachedLemma) Return() ([]*parser.Lemma, error) {
-	return cl.Lemmas, cl.Error
+	return cl.Lemmas, errors.New(cl.Error)
 }
 
 func marshalKey(k string, t keyType) []byte {
