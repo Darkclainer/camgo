@@ -22,11 +22,11 @@ func errorRequestf(t *testing.T, w http.ResponseWriter, format string, args ...i
 	http.Error(w, str, http.StatusInternalServerError)
 }
 
-func newTestQuerier( // nolint:gocritic // test
+func newTestRemote( // nolint:gocritic // test
 	t *testing.T,
 	queryFn, suggestionFn, lemmaFn map[string]http.HandlerFunc,
 ) (
-	*Querier,
+	*Remote,
 	func(),
 ) {
 	mux := http.NewServeMux()
@@ -77,7 +77,7 @@ func newTestQuerier( // nolint:gocritic // test
 	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 		return http.ErrUseLastResponse
 	}
-	querier := NewQuerier(client, &JSONParser{}, &Config{
+	querier := NewRemote(client, &JSONParser{}, &Config{
 		Host:     server.Listener.Addr().String(),
 		Protocol: "http",
 	})
@@ -97,7 +97,7 @@ func redirectSuggestions(w http.ResponseWriter, r *http.Request, query string, s
 	http.Redirect(w, r, u.String(), status)
 }
 
-func TestQuerierSearch(t *testing.T) { // nolint:funlen // test
+func TestRemoteSearch(t *testing.T) { // nolint:funlen // test
 	testCases := map[string]struct {
 		query        string
 		lemmaID      string
@@ -184,7 +184,7 @@ func TestQuerierSearch(t *testing.T) { // nolint:funlen // test
 	for name := range testCases {
 		tc := testCases[name]
 		t.Run(name, func(t *testing.T) {
-			querier, clean := newTestQuerier(t, tc.queryFn, tc.suggestionFn, nil)
+			querier, clean := newTestRemote(t, tc.queryFn, tc.suggestionFn, nil)
 			defer clean()
 
 			lemmaID, suggestions, err := querier.Search(context.TODO(), tc.query)
@@ -206,7 +206,7 @@ func TestQuerierSearch(t *testing.T) { // nolint:funlen // test
 		})
 	}
 }
-func TestQuerierGetLemma(t *testing.T) {
+func TestRemoteGetLemma(t *testing.T) {
 	testLemmas := []*parser.Lemma{
 		{
 			Lemma:     "test lemma",
@@ -251,7 +251,7 @@ func TestQuerierGetLemma(t *testing.T) {
 	for name := range testCases {
 		tc := testCases[name]
 		t.Run(name, func(t *testing.T) {
-			querier, clean := newTestQuerier(t, nil, nil, tc.lemmaFn)
+			querier, clean := newTestRemote(t, nil, nil, tc.lemmaFn)
 			defer clean()
 
 			lemmas, err := querier.GetLemma(context.TODO(), tc.lemmaID)

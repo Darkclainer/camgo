@@ -11,20 +11,12 @@ import (
 	"github.com/darkclainer/camgo/pkg/parser"
 )
 
-//go:generate go run github.com/vektra/mockery/cmd/mockery -name QueryInterface -output ../mocks/
-
-type QueryInterface interface {
-	GetLemma(ctx context.Context, lemmaID string) ([]*parser.Lemma, error)
-	Search(ctx context.Context, query string) (string, []string, error)
-	Close(ctx context.Context) error
-}
-
 type Cached struct {
-	querier QueryInterface
+	querier Querier
 	storage *Storage
 }
 
-func NewCached(querier QueryInterface, storage *badger.DB) *Cached {
+func NewCached(querier Querier, storage *badger.DB) *Cached {
 	return &Cached{
 		querier: querier,
 		storage: &Storage{DB: storage},

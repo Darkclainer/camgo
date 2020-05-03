@@ -41,16 +41,16 @@ type Config struct {
 	MaxWorkers int
 }
 
-type Querier struct {
+type Remote struct {
 	client *http.Client
 	config *Config
 	pool   *workerpool.WorkerPool
 	p      Parser
 }
 
-func NewQuerier(client *http.Client, p Parser, config *Config) *Querier {
+func NewRemote(client *http.Client, p Parser, config *Config) *Remote {
 	if client == nil {
-		client = getDefaultQuerierClient()
+		client = getDefaultRemoteClient()
 	}
 	if p == nil {
 		p = &HTMLParser{}
@@ -64,7 +64,7 @@ func NewQuerier(client *http.Client, p Parser, config *Config) *Querier {
 	if config.MaxWorkers < 1 { // nolint:gomnd // if number not specified
 		config.MaxWorkers = runtime.NumCPU()
 	}
-	return &Querier{
+	return &Remote{
 		client: client,
 		config: config,
 		pool:   workerpool.New(config.MaxWorkers),
@@ -72,8 +72,8 @@ func NewQuerier(client *http.Client, p Parser, config *Config) *Querier {
 	}
 }
 
-// getDefaultQuerierClient returns default client for querier that ignores redirect
-func getDefaultQuerierClient() *http.Client {
+// getDefaultRemoteClient returns default client for remote that ignores redirect
+func getDefaultRemoteClient() *http.Client {
 	return &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
@@ -81,7 +81,7 @@ func getDefaultQuerierClient() *http.Client {
 	}
 }
 
-func (q *Querier) GetLemma(ctx context.Context, lemmaID string) ([]*parser.Lemma, error) {
+func (q *Remote) GetLemma(ctx context.Context, lemmaID string) ([]*parser.Lemma, error) {
 	response, err := q.get(ctx, q.newLemmaURL(lemmaID), http.StatusOK)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get lemma: %w", err)
@@ -100,7 +100,7 @@ func (q *Querier) GetLemma(ctx context.Context, lemmaID string) ([]*parser.Lemma
 
 // Search returns lemmaID if found something
 // Also it can return ErrLemmaNotFound error if there is some suggestions
-func (q *Querier) Search(ctx context.Context, query string) (lemmadID string, suggestions []string, err error) {
+func (q *Remote) Search(ctx context.Context, query string) (lemmadID string, suggestions []string, err error) {
 	redirect, err := q.getSearch(ctx, q.newSearchURL(query))
 	if err != nil {
 		return "", nil, fmt.Errorf("can not perform search: %w", err)
@@ -122,7 +122,7 @@ func (q *Querier) Search(ctx context.Context, query string) (lemmadID string, su
 	}
 }
 
-func (q *Querier) getSearch(ctx context.Context, urlSearch string) (*url.URL, error) {
+func (q *Remote) getSearch(ctx context.Context, urlSearch string) (*url.URL, error) {
 	response, err := q.get(ctx, urlSearch, http.StatusFound)
 	if err != nil {
 		return nil, fmt.Errorf("failed to perform get: %w", err)
@@ -135,7 +135,7 @@ func (q *Querier) getSearch(ctx context.Context, urlSearch string) (*url.URL, er
 	return redirect, nil
 }
 
-func (q *Querier) getSuggestions(ctx context.Context, urlSuggestions string) ([]string, error) {
+func (q *Remote) getSuggestions(ctx context.Context, urlSuggestions string) ([]string, error) {
 	response, err := q.get(ctx, urlSuggestions, http.StatusOK)
 	if err != nil {
 		return nil, fmt.Errorf("failed to perform get: %w", err)
@@ -151,7 +151,7 @@ func (q *Querier) getSuggestions(ctx context.Context, urlSuggestions string) ([]
 	return suggestions, nil
 }
 
-func (q *Querier) get(ctx context.Context, urlGet string, expectedStatus int) (*http.Response, error) {
+func (q *Remote) get(ctx context.Context, urlGet string, expectedStatus int) (*http.Response, error) {
 	request, err := q.newRequest(ctx, urlGet)
 	if err != nil {
 		return nil, fmt.Errorf("can not assemble request: %w", err)
@@ -167,7 +167,7 @@ func (q *Querier) get(ctx context.Context, urlGet string, expectedStatus int) (*
 	return response, err
 }
 
-func (q *Querier) newSearchURL(query string) string {
+func (q *Remote) newSearchURL(query string) string {
 	searchURL := q.newURL()
 	searchURL.Path = searchPath
 
@@ -179,20 +179,20 @@ func (q *Querier) newSearchURL(query string) string {
 	return searchURL.String()
 }
 
-func (q *Querier) newLemmaURL(lemmaID string) string {
+func (q *Remote) newLemmaURL(lemmaID string) string {
 	lemmaURL := q.newURL()
 	lemmaURL.Path = path.Join(lemmaPath, lemmaID)
 	return lemmaURL.String()
 }
 
-func (q *Querier) newURL() *url.URL {
+func (q *Remote) newURL() *url.URL {
 	return &url.URL{
 		Scheme: q.config.Protocol,
 		Host:   q.config.Host,
 	}
 }
 
-func (q *Querier) newRequest(ctx context.Context, urlRequest string) (*http.Request, error) {
+func (q *Remote) newRequest(ctx context.Context, urlRequest string) (*http.Request, error) {
 	req, err := http.NewRequestWithContext(ctx, "GET", urlRequest, nil)
 	if err != nil {
 		return nil, fmt.Errorf("can not form request: %w", err)
@@ -203,7 +203,7 @@ func (q *Querier) newRequest(ctx context.Context, urlRequest string) (*http.Requ
 	return req, nil
 }
 
-func (q *Querier) Close(ctx context.Context) error {
+func (q *Remote) Close(ctx context.Context) error {
 	q.client.CloseIdleConnections()
 	q.pool.StopWait()
 	return nil

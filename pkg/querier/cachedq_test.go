@@ -21,7 +21,7 @@ func TestCachedGetLemma(t *testing.T) {
 		},
 	}
 	t.Run("get through querier", func(t *testing.T) {
-		q := &mocks.QueryInterface{}
+		q := &mocks.Querier{}
 		q.On("GetLemma", mock.Anything, "test_lemma").
 			Return(expectedLemmas, errors.New("test error"))
 		cached := NewCached(q, storage.DB)
@@ -32,7 +32,7 @@ func TestCachedGetLemma(t *testing.T) {
 		assert.Equal(t, expectedLemmas, lemmas)
 	})
 	t.Run("get through storage", func(t *testing.T) {
-		q := &mocks.QueryInterface{}
+		q := &mocks.Querier{}
 		cached := NewCached(q, storage.DB)
 		lemmas, err := cached.GetLemma(context.TODO(), "test_lemma")
 		assert.EqualError(t, err, "test error")
@@ -52,7 +52,7 @@ func TestCachedSearch(t *testing.T) {
 		err:         errors.New("heellooo"),
 	}
 	t.Run("get through querier", func(t *testing.T) {
-		q := &mocks.QueryInterface{}
+		q := &mocks.Querier{}
 		q.On("Search", mock.Anything, "test_query").
 			Return(expected.id, expected.suggestions, expected.err)
 		cached := NewCached(q, storage.DB)
@@ -64,7 +64,7 @@ func TestCachedSearch(t *testing.T) {
 		assert.Equal(t, expected.err, err)
 	})
 	t.Run("get through cached", func(t *testing.T) {
-		q := &mocks.QueryInterface{}
+		q := &mocks.Querier{}
 		cached := NewCached(q, storage.DB)
 
 		id, suggestions, err := cached.Search(context.TODO(), "test_query")
@@ -81,7 +81,7 @@ func TestCachedClose(t *testing.T) {
 		t.Fatalf("can not open badger: %v", err)
 	}
 	t.Run("fine", func(t *testing.T) {
-		q := &mocks.QueryInterface{}
+		q := &mocks.Querier{}
 		q.On("Close", mock.Anything).Return(nil)
 		cached := NewCached(q, db)
 
@@ -90,7 +90,7 @@ func TestCachedClose(t *testing.T) {
 		assert.NoError(t, err)
 	})
 	t.Run("error in querier", func(t *testing.T) {
-		q := &mocks.QueryInterface{}
+		q := &mocks.Querier{}
 		q.On("Close", mock.Anything).Return(errors.New("test err"))
 		cached := NewCached(q, db)
 
