@@ -77,7 +77,7 @@ func newTestRemote( // nolint:gocritic // test
 	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 		return http.ErrUseLastResponse
 	}
-	querier := NewRemote(client, &JSONParser{}, &Config{
+	querier := NewRemote(client, &JSONParser{}, &RemoteConfig{
 		Host:     server.Listener.Addr().String(),
 		Protocol: "http",
 	})

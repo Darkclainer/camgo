@@ -11,16 +11,27 @@ import (
 	"github.com/darkclainer/camgo/pkg/parser"
 )
 
+type CachedConfig struct {
+	Path     string
+	InMemory bool
+}
+
 type Cached struct {
 	querier Querier
 	storage *Storage
 }
 
-func NewCached(querier Querier, storage *badger.DB) *Cached {
+func NewCached(querier Querier, config *CachedConfig) (*Cached, error) {
+	opts := badger.DefaultOptions(config.Path).
+		WithInMemory(config.InMemory)
+	db, err := badger.Open(opts)
+	if err != nil {
+		return nil, err
+	}
 	return &Cached{
 		querier: querier,
-		storage: &Storage{DB: storage},
-	}
+		storage: &Storage{DB: db},
+	}, nil
 }
 
 func (c *Cached) GetLemma(ctx context.Context, lemmaID string) ([]*parser.Lemma, error) {

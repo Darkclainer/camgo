@@ -28,7 +28,7 @@ var (
 	ErrSuggestions  = errors.New("suggestions exist")
 )
 
-type Config struct {
+type RemoteConfig struct {
 	// ExtraHeader specifies what header will be added to each request
 	ExtraHeader map[string]string
 	// Timeout specifies maximum wait time for each request
@@ -43,12 +43,12 @@ type Config struct {
 
 type Remote struct {
 	client *http.Client
-	config *Config
+	config *RemoteConfig
 	pool   *workerpool.WorkerPool
 	p      Parser
 }
 
-func NewRemote(client *http.Client, p Parser, config *Config) *Remote {
+func NewRemote(client *http.Client, p Parser, config *RemoteConfig) *Remote {
 	if client == nil {
 		client = getDefaultRemoteClient()
 	}

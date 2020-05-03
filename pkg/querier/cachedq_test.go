@@ -24,7 +24,10 @@ func TestCachedGetLemma(t *testing.T) {
 		q := &mocks.Querier{}
 		q.On("GetLemma", mock.Anything, "test_lemma").
 			Return(expectedLemmas, errors.New("test error"))
-		cached := NewCached(q, storage.DB)
+		cached := &Cached{
+			querier: q,
+			storage: &Storage{DB: storage.DB},
+		}
 
 		lemmas, err := cached.GetLemma(context.TODO(), "test_lemma")
 		q.AssertExpectations(t)
@@ -33,7 +36,10 @@ func TestCachedGetLemma(t *testing.T) {
 	})
 	t.Run("get through storage", func(t *testing.T) {
 		q := &mocks.Querier{}
-		cached := NewCached(q, storage.DB)
+		cached := &Cached{
+			querier: q,
+			storage: &Storage{DB: storage.DB},
+		}
 		lemmas, err := cached.GetLemma(context.TODO(), "test_lemma")
 		assert.EqualError(t, err, "test error")
 		assert.Equal(t, expectedLemmas, lemmas)
@@ -55,7 +61,10 @@ func TestCachedSearch(t *testing.T) {
 		q := &mocks.Querier{}
 		q.On("Search", mock.Anything, "test_query").
 			Return(expected.id, expected.suggestions, expected.err)
-		cached := NewCached(q, storage.DB)
+		cached := &Cached{
+			querier: q,
+			storage: &Storage{DB: storage.DB},
+		}
 
 		id, suggestions, err := cached.Search(context.TODO(), "test_query")
 		q.AssertExpectations(t)
@@ -65,7 +74,10 @@ func TestCachedSearch(t *testing.T) {
 	})
 	t.Run("get through cached", func(t *testing.T) {
 		q := &mocks.Querier{}
-		cached := NewCached(q, storage.DB)
+		cached := &Cached{
+			querier: q,
+			storage: &Storage{DB: storage.DB},
+		}
 
 		id, suggestions, err := cached.Search(context.TODO(), "test_query")
 		q.AssertExpectations(t)
@@ -83,7 +95,10 @@ func TestCachedClose(t *testing.T) {
 	t.Run("fine", func(t *testing.T) {
 		q := &mocks.Querier{}
 		q.On("Close", mock.Anything).Return(nil)
-		cached := NewCached(q, db)
+		cached := &Cached{
+			querier: q,
+			storage: &Storage{DB: db},
+		}
 
 		err := cached.Close(context.TODO())
 		q.AssertExpectations(t)
@@ -92,7 +107,10 @@ func TestCachedClose(t *testing.T) {
 	t.Run("error in querier", func(t *testing.T) {
 		q := &mocks.Querier{}
 		q.On("Close", mock.Anything).Return(errors.New("test err"))
-		cached := NewCached(q, db)
+		cached := &Cached{
+			querier: q,
+			storage: &Storage{DB: db},
+		}
 
 		err := cached.Close(context.TODO())
 		q.AssertExpectations(t)
