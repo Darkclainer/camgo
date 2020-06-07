@@ -16,7 +16,7 @@ const (
 	codeErrorArgs = iota + 1
 	codeNotFound
 	codeInternalError
-	timeoutSecounds = 10
+	timeoutSeconds = 10
 )
 
 func exitf(code int, format string, args ...interface{}) {
@@ -36,7 +36,7 @@ func main() {
 			"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:74.0) Gecko/20100101 Firefox/74.0",
 		},
 	})
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*timeoutSecounds)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*timeoutSeconds)
 	defer cancel()
 
 	lemmaID, suggestions, err := q.Search(ctx, *query)

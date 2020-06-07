@@ -59,7 +59,7 @@ func NewRemote(client *http.Client, p Parser, config *RemoteConfig) *Remote {
 		config.Host = defaultHost
 	}
 	if config.Protocol == "" {
-		config.Host = defaultProtocol
+		config.Protocol = defaultProtocol
 	}
 	if config.MaxWorkers < 1 { // nolint:gomnd // if number not specified
 		config.MaxWorkers = runtime.NumCPU()

@@ -7,6 +7,9 @@ require (
 	github.com/andybalholm/cascadia v1.1.0
 	github.com/dgraph-io/badger/v2 v2.0.3
 	github.com/gammazero/workerpool v0.0.0-20200311205957-7b00833861c6
+	github.com/spf13/pflag v1.0.3
+	github.com/spf13/viper v1.3.2
 	github.com/stretchr/testify v1.5.1
 	github.com/vektra/mockery v0.0.0-20181123154057-e78b021dcbb5
+	go.uber.org/zap v1.15.0
 )
