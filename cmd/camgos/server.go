@@ -84,29 +84,3 @@ func (s *Server) middleLogging(handler http.HandlerFunc) http.HandlerFunc {
 		handler(w, r)
 	}
 }
-
-func (s *Server) handleQuery() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			http.NotFound(w, r)
-			return
-		}
-		query, ok := r.URL.Query()["q"]
-		if !ok || len(query) < 1 {
-			s.respondJSON(w, map[string]interface{}{
-				"error": "no query",
-			}, http.StatusBadRequest)
-			return
-		}
-		lemma, suggestions, err := s.q.Search(r.Context(), query[0])
-		var errMsg string
-		if err != nil {
-			errMsg = err.Error()
-		}
-		s.respondJSON(w, map[string]interface{}{
-			"lemma":       lemma,
-			"suggestions": suggestions,
-			"error":       errMsg,
-		}, http.StatusOK)
-	}
-}

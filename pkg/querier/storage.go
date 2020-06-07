@@ -113,7 +113,11 @@ type CachedQuery struct {
 }
 
 func (cq *CachedQuery) Return() (lemmaID string, suggestions []string, err error) {
-	return cq.LemmaID, cq.Suggestions, errors.New(cq.Error)
+	var rerr error
+	if cq.Error != "" {
+		rerr = errors.New(cq.Error)
+	}
+	return cq.LemmaID, cq.Suggestions, rerr
 }
 
 type CachedLemma struct {
@@ -123,7 +127,11 @@ type CachedLemma struct {
 }
 
 func (cl *CachedLemma) Return() ([]*parser.Lemma, error) {
-	return cl.Lemmas, errors.New(cl.Error)
+	var err error
+	if cl.Error != "" {
+		err = errors.New(cl.Error)
+	}
+	return cl.Lemmas, err
 }
 
 func marshalKey(k string, t keyType) []byte {
