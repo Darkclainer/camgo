@@ -4,8 +4,10 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/darkclainer/camgo/pkg/querier"
 	"go.uber.org/zap"
+
+	"github.com/darkclainer/camgo/pkg/parser"
+	"github.com/darkclainer/camgo/pkg/querier"
 )
 
 type ResponseStatus int
@@ -18,9 +20,10 @@ const (
 )
 
 type ResponseSearch struct {
-	LemmaID     string         `json:"lemma_id,omitempty"`
-	Suggestions []string       `json:"suggestions,omitempty"`
-	Status      ResponseStatus `json:"status"`
+	LemmaID     string          `json:"lemma_id,omitempty"`
+	Lemmas      []*parser.Lemma `json:"lemma,omitempty"`
+	Suggestions []string        `json:"suggestions,omitempty"`
+	Status      ResponseStatus  `json:"status"`
 }
 
 func (s *Server) handleQuery() http.HandlerFunc {
@@ -49,6 +52,17 @@ func (s *Server) handleQuery() http.HandlerFunc {
 				s.logger.Error("Querier search returned error",
 					zap.Error(err),
 					zap.String("query", query[0]),
+				)
+			}
+		}
+		if lemmaID != "" {
+			lemmas, err := s.q.GetLemma(r.Context(), lemmaID)
+			response.Lemmas = lemmas
+			if err != nil {
+				response.Status = ResponseError
+				s.logger.Error("Querier GetLemma returned error",
+					zap.Error(err),
+					zap.String("lemma_id", lemmaID),
 				)
 			}
 		}

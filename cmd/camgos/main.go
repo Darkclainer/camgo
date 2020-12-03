@@ -108,6 +108,8 @@ func main() {
 		}
 	}()
 
+	servePath := fmt.Sprintf("http://%s", conf.Host)
+	logger.Info(fmt.Sprintf("Listeing started on %s\n", servePath))
 	if err := server.ListenAndServe(); err != nil {
 		if !errors.Is(err, http.ErrServerClosed) {
 			logger.Error("Server error", zap.Error(err))
